@@ -1,5 +1,6 @@
 import React from "react";
 import ProdutoService from "../../app/produtoService";
+import ErroValidacao from '../../app/produtoService';
 
 const estadoInicial = {
   nome: "",
@@ -9,6 +10,7 @@ const estadoInicial = {
   fornecedor: "",
   //
   sucesso: false,
+  errors: [],
 };
 
 class CadastroProduto extends React.Component {
@@ -37,9 +39,15 @@ class CadastroProduto extends React.Component {
       fornecedor: this.state.fornecedor
     };
 
-    this.service.salvar(produto);
-    this.limpaCampos();
-    console.log("Salvo com Sucesso");
+    try{
+      this.service.salvar(produto);
+      this.limpaCampos();
+      this.setState({sucesso:true});
+    }catch(erro){
+      const errors = erro.errors;
+    }
+
+    
   };
 
   limpaCampos = () => {
