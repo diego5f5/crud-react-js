@@ -1,6 +1,7 @@
 import React from "react";
+
 import ProdutoService from "../../app/produtoService";
-import ErroValidacao from '../../app/produtoService';
+import { withRouter } from "react-router-dom";
 
 const estadoInicial = {
   nome: "",
@@ -11,6 +12,7 @@ const estadoInicial = {
   //
   sucesso: false,
   errors: [],
+  atualizando: false
 };
 
 class CadastroProduto extends React.Component {
@@ -39,35 +41,81 @@ class CadastroProduto extends React.Component {
       fornecedor: this.state.fornecedor
     };
 
-    try{
+    try {
       this.service.salvar(produto);
       this.limpaCampos();
-      this.setState({sucesso:true});
-    }catch(erro){
+      this.setState({ sucesso: true });
+    } catch (erro) {
       const errors = erro.errors;
+      this.setState({ errors: errors });
     }
-
-    
   };
 
   limpaCampos = () => {
-    this.setState(estadoInicial);
+    if(!this.state.atualizando){
+      this.setState(estadoInicial);
+    }
   };
+
+  componentDidMount() {
+    const sku = this.props.match.params.sku;
+
+    if (sku) {
+      const resultado = this.service
+        .obterProdutos()
+        .filter(produto => produto.sku === sku);
+      if (resultado.length === 1) {
+        const produtoEncontrado = resultado[0];
+        this.setState({ ...produtoEncontrado, atualizando: true });
+      }
+    }
+  }
 
   render() {
     return (
       <div className="card">
-        <div className="card-header">Cadastro de Produto</div>
+        <div className="card-header">
+          {this.state.atualizando ? <h4>Edição de Produto</h4> : <h4>Cadastro de Produto</h4>}
+        </div>
         <div className="card-body">
-
           {this.state.sucesso ? (
-              <div class="alert alert-dismissible alert-success">
-              <button type="button" class="close" data-dismiss="alert">
+            <div className="alert alert-dismissible alert-success">
+              <button type="button" className="close" data-dismiss="alert">
                 &times;
               </button>
-              <strong>Sucesso!</strong> O produto foi cadastrado corretamente.
+              {this.state.atualizando ? (
+                <>
+                  <strong>Sucesso! </strong>O produto foi atualizado.
+                </>
+              ) : (
+                <>
+                  <strong>Sucesso! </strong>O produto foi cadastrado
+                  corretamente.
+                </>
+              )}
             </div>
-          ) : null }
+          ) : null}
+
+          {this.state.errors.length > 0
+            ? this.state.errors.map((msg, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="alert alert-dismissible alert-danger"
+                  >
+                    <button
+                      type="button"
+                      className="close"
+                      data-dismiss="alert"
+                    >
+                      &times;
+                    </button>
+                    <strong>Erro! </strong>
+                    {msg}
+                  </div>
+                );
+              })
+            : null}
 
           <div className="row">
             <div className="col-md-6">
@@ -89,6 +137,7 @@ class CadastroProduto extends React.Component {
                 <input
                   type="text"
                   name="sku"
+                  disabled={this.state.atualizando}
                   onChange={this.onChangeHandler}
                   value={this.state.sku}
                   className="form-control"
@@ -142,15 +191,22 @@ class CadastroProduto extends React.Component {
           <div className="row">
             <div className="col-md-1">
               <button
+                title="Cadastrar este produto"
                 className="btn btn-success"
                 onClick={this.onSubmitHandler}
               >
-                Salvar
+                {this.state.atualizando ? 'Atualizar' : 'Salvar'}
+                
               </button>
             </div>
 
             <div className="col-md-1">
-              <button className="btn btn-primary" onClick={this.limpaCampos}>
+              <button
+                disabled={this.state.atualizando}
+                title="Limpar todos os campos"
+                className="btn btn-primary"
+                onClick={this.limpaCampos}
+              >
                 Limpar
               </button>
             </div>
@@ -161,4 +217,4 @@ class CadastroProduto extends React.Component {
   }
 }
 
-export default CadastroProduto;
+export default withRouter(CadastroProduto);

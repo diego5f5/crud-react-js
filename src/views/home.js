@@ -1,17 +1,19 @@
 import React from "react";
 
+import {Link} from 'react-router-dom';
+
 function Home() {
   return (
-    <div class="jumbotron">
-      <h1 class="display-3">Bem Vindo!</h1>
-      <p class="lead">
+    <div className="jumbotron">
+      <h1 className="display-3">Bem Vindo!</h1>
+      <p className="lead">
         Este é seu sistema, utilize a barra de navegação para acessar as páginas.
       </p>
-      <hr class="my-4" />
-      <p class="lead">
-        <a class="btn btn-primary btn-lg" href="#" role="button">
+      <hr className="my-4" />
+      <p className="lead">
+        <Link className="btn btn-primary btn-lg" to="/cadastro-produtos" role="button">
           Cadastrar
-        </a>
+        </Link>
       </p>
     </div>
   );
