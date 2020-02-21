@@ -1,5 +1,6 @@
 import React from "react";
 
+import Card from "../../components/card";
 import ProdutoService from "../../app/produtoService";
 import { withRouter } from "react-router-dom";
 
@@ -33,6 +34,8 @@ class CadastroProduto extends React.Component {
   };
 
   onSubmitHandler = event => {
+    // "event.preventDefault" Evita a submissão de formulário padrão do HTML para que possamos usar o método react.
+    event.preventDefault();
     const produto = {
       nome: this.state.nome,
       sku: this.state.sku,
@@ -40,6 +43,10 @@ class CadastroProduto extends React.Component {
       preco: this.state.preco,
       fornecedor: this.state.fornecedor
     };
+
+    if (this.state.sucesso) {
+      this.setState({ sucesso: false });
+    }
 
     try {
       this.service.salvar(produto);
@@ -52,7 +59,7 @@ class CadastroProduto extends React.Component {
   };
 
   limpaCampos = () => {
-    if(!this.state.atualizando){
+    if (!this.state.atualizando) {
       this.setState(estadoInicial);
     }
   };
@@ -73,16 +80,18 @@ class CadastroProduto extends React.Component {
 
   render() {
     return (
-      <div className="card">
-        <div className="card-header">
-          {this.state.atualizando ? <h4>Edição de Produto</h4> : <h4>Cadastro de Produto</h4>}
-        </div>
-        <div className="card-body">
+      <Card
+        header={
+          this.state.atualizando ? (
+            <h4>Edição de Produto</h4>
+          ) : (
+            <h4>Cadastro de Produto</h4>
+          )
+        }
+      >
+        <form id="frmProduto" onSubmit={this.onSubmitHandler}>
           {this.state.sucesso ? (
             <div className="alert alert-dismissible alert-success">
-              <button type="button" className="close" data-dismiss="alert">
-                &times;
-              </button>
               {this.state.atualizando ? (
                 <>
                   <strong>Sucesso! </strong>O produto foi atualizado.
@@ -103,13 +112,6 @@ class CadastroProduto extends React.Component {
                     key={index}
                     className="alert alert-dismissible alert-danger"
                   >
-                    <button
-                      type="button"
-                      className="close"
-                      data-dismiss="alert"
-                    >
-                      &times;
-                    </button>
                     <strong>Erro! </strong>
                     {msg}
                   </div>
@@ -189,18 +191,17 @@ class CadastroProduto extends React.Component {
           </div>
 
           <div className="row">
-            <div className="col-md-1">
+            <div className="col-auto mr-auto">
               <button
                 title="Cadastrar este produto"
                 className="btn btn-success"
-                onClick={this.onSubmitHandler}
+                type="submit"
               >
-                {this.state.atualizando ? 'Atualizar' : 'Salvar'}
-                
+                {this.state.atualizando ? "Atualizar" : "Salvar"}
               </button>
             </div>
 
-            <div className="col-md-1">
+            <div className="col-auto">
               <button
                 disabled={this.state.atualizando}
                 title="Limpar todos os campos"
@@ -211,8 +212,8 @@ class CadastroProduto extends React.Component {
               </button>
             </div>
           </div>
-        </div>
-      </div>
+        </form>
+      </Card>
     );
   }
 }
