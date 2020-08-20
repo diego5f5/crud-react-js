@@ -1,6 +1,6 @@
 # Product registration in React JS
 
-Projeto desenvolvido durante o aprendizado da tecnologia React JS e afins, o mesmo se resume a um CRUD onde é possível cadastrar produtos de forma limitada, os Input's possuem uma certa validação e os dados são armazenados no Local Storage do próprio navegador.
+Project developed during the learning of React JS technology, it comes down to a CRUD where it is possible to register products in a limited way, the Input's have a certain validation and the data is stored in the Local Storage of the browser itself.
 
 # How to use
 
